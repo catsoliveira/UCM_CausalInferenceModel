@@ -4,7 +4,7 @@ import math
 from scipy.stats import chi2
 
 
-class UC:
+class UCM:
     
     def __init__(self, data):
         self.instances = data.values.tolist()
@@ -12,8 +12,9 @@ class UC:
         NN = self.count_matrix(data)
         self.N = [NN, NN.transpose()]
         self.N_xy = [self.count_variable(data, 0), self.count_variable(data, 1)]
-        self.cause = 0 
-        self.effect = 1
+        # remove from comment when purpose is not to run find_best_direction function
+        #self.cause = 0 
+        #self.effect = 1
     
     def states_variables(self, data): #returns the states of each variable X and Y
         rs= [sorted(data[column].unique()) for column in list(data.columns)]
@@ -157,12 +158,12 @@ class UC:
         return val
             
     
-    def estimate_UC(self, data, var_type): #returns the symmetric channel given data and type 
+    def estimate_UCM(self, data, var_type): #returns the symmetric channel given data and type 
         dep = self.effect
         if var_type[dep] == 'cyclic':
-            UC = self.cyclic_uniform_channel(data)
+            UCM = self.cyclic_uniform_channel(data)
         else: 
-            UC = self.uniform_channel(data)
+            UCM = self.uniform_channel(data)
         gamma = UC[0]
         perm = UC[1]
         estimated_condprob = self.uniform_condprob(gamma, perm)
@@ -172,13 +173,13 @@ class UC:
         ###X->Y###########
         self.cause = 0
         self.effect = 1
-        estimated_condprob_XY = self.estimate_UC(data, type_variables)
+        estimated_condprob_XY = self.estimate_UCM(data, type_variables)
         G_XY = self.squared_G(estimated_condprob_XY)
         print(G_XY)
         ##Y->X#################
         self.cause = 1
         self.effect = 0
-        estimated_condprob_YX = self.estimate_UC(data, type_variables)
+        estimated_condprob_YX = self.estimate_UCM(data, type_variables)
         G_YX = self.squared_G(estimated_condprob_YX)
         print(G_YX)
         return G_XY, G_YX
