@@ -1,7 +1,7 @@
 ##test synthetic data
 from synthetic_data import DataGenerator
 import matplotlib.pyplot as plt
-from uniform_channels import UC
+from UCM import UCM_algorithm
 
 
 def test_causality():
@@ -18,7 +18,7 @@ def test_causality():
                 while any(len(t)!=val for t in [data[column].unique() for column in list(data.columns)]):
                     generator = DataGenerator().getinstances(instances, [val,val])
                     data = generator[0]
-                scores = UC(data).find_best_direction(data, ['no','cyclic'])
+                scores = UCM_algorithm(data).find_best_direction(data, ['no','cyclic'])
                 if scores[0]<scores[1]:
                     times_rightdirection+=1
             prob_right = times_rightdirection/100
@@ -57,7 +57,7 @@ def test_causality_difsup():
                     generator = DataGenerator().getinstances(instances, [val[0],val[1]])
                     data = generator[0]
                     col = [len(data[column].unique()) for column in list(data.columns)]
-                scores = UC(data).find_best_direction(data, ['no','cyclic'])
+                scores = UCM_algorithm(data).find_best_direction(data, ['no','cyclic'])
                 if scores[0]<scores[1]:
                     times_rightdirection+=1
             prob_right = times_rightdirection/100
