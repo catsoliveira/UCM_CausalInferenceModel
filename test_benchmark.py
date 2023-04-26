@@ -1,11 +1,9 @@
 ##Test Benchmark
 import numpy as np
 import pandas as pd
-#import random
 import matplotlib.pyplot as plt
 import os
-#import re
-from uniform_channels import UC
+from UCM import UCM_algorithm
 from dc.dc import dc
 from HCR import HCR_algorithm
 
@@ -51,31 +49,31 @@ def test_benchmark():
     all_pairs = truths[0]
     truth = truths[1]
     nsample = 0
-    res_lrs= []
+    res_ucm= []
     res_dc = []
     res_hcr = []
-    diff_lrs = []
+    diff_ucm = []
     diff_dc = []
     diff_hcr = []
     
     for i, data in enumerate(load_pairs(all_pairs)):
         nsample+=1
-        UChannels = UC(data)
-        score_lrs = UChannels.find_best_direction(data, ['no','no'])
-        p_values = UChannels.stats_test(data, score_lrs)
+        UChannels = UCM_algorithm(data)
+        score_ucm = UChannels.find_best_direction(data, ['no','no'])
+        p_values = UChannels.stats_test(data, score_ucm)
         score_dc = dc(compact_X(data[0]), compact_X(data[1]))       
         score_hcr = HCR_algorithm(data)
         
-        diff_lrs.append(abs(p_values[0] - p_values[1]))
+        diff_ucm.append(abs(p_values[0] - p_values[1]))
         diff_dc.append(abs(score_dc[0] - score_dc[1]))
         diff_hcr.append(abs(score_hcr[0] - score_hcr[1]))
         
-        if score_lrs[0] < score_lrs[1]:
-            cause_lrs = '1'
-        elif score_lrs[0] > score_lrs[1]:
-            cause_lrs = '-1'
+        if score_ucm[0] < score_ucm[1]:
+            cause_ucm = '1'
+        elif score_ucm[0] > score_ucm[1]:
+            cause_ucm = '-1'
         else:
-            cause_lrs = ''
+            cause_ucm = ''
             
         if score_dc[0] < score_dc[1]:
             cause_dc = '1'
@@ -92,10 +90,10 @@ def test_benchmark():
             cause_hcr = ''
         
         true_cause = truth[all_pairs[i]]
-        if cause_lrs == true_cause:
-            res_lrs.append(True)
+        if cause_ucm == true_cause:
+            res_ucm.append(True)
         else:
-            res_lrs.append(False)     
+            res_ucm.append(False)     
         if cause_dc == true_cause:
             res_dc.append(True)
         else:
@@ -105,33 +103,33 @@ def test_benchmark():
         else:
             res_hcr.append(False) 
         print(res_dc)
-        print(res_lrs)
+        print(res_ucm)
         print(res_hcr)
             
-    ind_lrs = np.argsort(diff_lrs)[::-1]
+    ind_ucm = np.argsort(diff_ucm)[::-1]
     ind_dc = np.argsort(diff_dc)[::-1]
     ind_hcr = np.argsort(diff_hcr)[::-1]
-    res_lrs = [res_lrs[i] for i in ind_lrs]
+    res_ucm = [res_ucm[i] for i in ind_ucm]
     res_dc = [res_dc[i] for i in ind_dc]
     res_hcr = [res_hcr[i] for i in ind_hcr]
     
     dec_rate = np.arange(0.01, 1.01, 0.01)
-    accuracy_lrs= []
+    accuracy_ucm= []
     accuracy_dc =[]
     accuracy_hcr = []
     for r in dec_rate:
         maxindex = int(r*nsample)
-        rate_lrs = res_lrs[:maxindex]
+        rate_ucm = res_ucm[:maxindex]
         rate_dc = res_dc[:maxindex]
         rate_hcr = res_hcr[:maxindex]
-        accuracy_lrs.append(sum(rate_lrs)/ len(rate_lrs))
+        accuracy_ucm.append(sum(rate_ucm)/ len(rate_ucm))
         accuracy_dc.append(sum(rate_dc)/ len(rate_dc))
         accuracy_hcr.append(sum(rate_hcr)/ len(rate_hcr))
     print(dec_rate)
-    print(accuracy_lrs)
+    print(accuracy_ucm)
     print(accuracy_dc)
     print(accuracy_hcr)
-    plt.plot(dec_rate, accuracy_lrs, label = 'LRS')
+    plt.plot(dec_rate, accuracy_ucm, label = 'UCM')
     plt.plot(dec_rate, accuracy_dc, label = 'DC')
     plt.plot(dec_rate, accuracy_hcr, label = 'HCR')
     plt.plot(dec_rate, [0.5 for i in range(len(dec_rate))], 'r--')
