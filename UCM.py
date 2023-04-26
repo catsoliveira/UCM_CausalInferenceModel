@@ -164,8 +164,8 @@ class UCM:
             UCM = self.cyclic_uniform_channel(data)
         else: 
             UCM = self.uniform_channel(data)
-        gamma = UC[0]
-        perm = UC[1]
+        gamma = UCM[0]
+        perm = UCM[1]
         estimated_condprob = self.uniform_condprob(gamma, perm)
         return estimated_condprob
         
