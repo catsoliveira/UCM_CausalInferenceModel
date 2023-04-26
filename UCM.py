@@ -4,7 +4,7 @@ import math
 from scipy.stats import chi2
 
 
-class UCM:
+class UCM_algorithm:
     
     def __init__(self, data):
         self.instances = data.values.tolist()
