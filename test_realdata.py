@@ -1,6 +1,6 @@
 ##test real data
 import pandas as pd
-from uniform_channels import UC
+from UCM import UCM_algorithm
 from dc.dc import dc
 from HCR import HCR_algorithm
 from scipy.stats import chi2_contingency
@@ -14,8 +14,7 @@ def test_temperature():
     data[1] = data[1].round()
     data[1] = data[1].astype(int)
     data[1] = data[1].replace(sorted(data[1].unique()), [i for i in range(len(data[1].unique()))])
-    #score = HCR_algorithm(data)
-    UChannels = UC(data)
+    UChannels = UCM_algorithm(data)
     stats = UChannels.find_best_direction(data, ['cyclic', 'no'])
     score = UChannels.stats_test(data, stats)
     return score
@@ -43,7 +42,7 @@ def test_adult():
     for pair in pairs:
         dataa = data[pair]
         dataa.columns = range(dataa.shape[1])
-        UChannels = UC(data)
+        UChannels = UCM_algorithm(data)
         stats = UChannels.find_best_direction(data, ['no', 'no'])
         score = UChannels.stats_test(data, stats)
         #score = HCR_algorithm(dataa)
@@ -67,13 +66,9 @@ def test_inflammation():
         data.loc[data[0]=='no', 0] = 0
         data.loc[data[1]=='yes', 1] = 1
         data.loc[data[1]=='no', 1] = 0
-        UChannels = UC(data)
+        UChannels = UCM_algorithm(data)
         stats = UChannels.find_best_direction(data, ['no', 'no'])
         score = UChannels.stats_test(data, stats)
-        print("aqui")
-        print(score)
-        scores.append(score)
-        score = HCR_algorithm(data)
         scores.append(score)
     return scores
 
@@ -82,9 +77,7 @@ def test_horsecolic():
     data = pd.read_csv('real_data/horse_colic.csv', delimiter = ";", header = None)
     data[0] = data[0].replace(sorted(data[0].unique()), [i for i in range(len(data[0].unique()))])
     data[1] = data[1].replace(sorted(data[1].unique()), [i for i in range(len(data[1].unique()))])
-    #score = HCR_algorithm(data)
-    #score = Symmetric_Channels(data).find_best_direction(data, ['no', 'no'])
-    UChannels = UC(data)
+    UChannels = UCM_algorithm(data)
     stats = UChannels.find_best_direction(data, ['no', 'no'])
     score = UChannels.stats_test(data, stats)
     return score
@@ -104,7 +97,7 @@ def test_bridges():
         data[1] = data[1].replace(sorted(data[1].unique()), [i for i in range(len(data[1].unique()))])
         #score = HCR_algorithm(data)
         #score = Symmetric_Channels(data).find_best_direction(data, ['no', 'no'])
-        UChannels = UC(data)
+        UChannels = UCM_algorithm(data)
         stats = UChannels.find_best_direction(data, ['no', 'no'])
         score = UChannels.stats_test(data, stats)
         scores.append(score)
